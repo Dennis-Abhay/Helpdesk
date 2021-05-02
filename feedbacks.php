@@ -13,6 +13,15 @@ if($f3->exists('SESSION.username')){
 }
 $user =  new DB\SQL\Mapper($f3->get('db'),'hd_user');
 $user->load(array('username=?', $f3->get('SESSION.username')));
+
+$ticketcounter =  new DB\SQL\Mapper($f3->get('db'),'hd_ticket');
+$ticketcounter->load(array('status = ? AND agent = ?', "Open", $f3->get('SESSION.username')));
+	
+$dashboardcounter =  new DB\SQL\Mapper($f3->get('db'),'hd_ticket');
+$dashboardcounter->load(array('agent = ?', ""));
+
+$pointcounter =  new DB\SQL\Mapper($f3->get('db'),'hd_ticket');
+$pointcounter->load(array('status = ?', "Closed"));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +31,7 @@ $user->load(array('username=?', $f3->get('SESSION.username')));
     <!--  All snippets are MIT license http://bootdey.com/license -->
     <title>bs4 Profile Settings page - Bootdey.com</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap/4.1.2/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
     	body{
     margin-top:20px;
@@ -252,7 +261,7 @@ a.list-group-item, .list-group-item-action {
         <div class="col-lg-4">
             <aside class="user-info-wrapper">
                 <div class="user-cover" style="background-image: url(https://bootdey.com/img/Content/bg1.jpg);">
-                    <?php if($user->hd_staff == 'true'){ ?><div class="info-label" data-toggle="tooltip" title="" data-original-title="You currently have 290 Reward Points to spend"><i class="icon-medal"></i>290 points</div> <?php } ?>
+                    <?php if($user->hd_staff == 'true'){ ?><div class="info-label" data-toggle="tooltip" title="" data-original-title="You currently have <?php echo $pointcounter->loaded(); ?> Reward Points to spend"><i class="icon-medal"></i><?php echo $pointcounter->loaded(); ?> points</div> <?php } ?>
                 </div>
                 <div class="user-info">
                     <div class="user-avatar">
@@ -263,14 +272,16 @@ a.list-group-item, .list-group-item-action {
                 </div>
             </aside>
             <nav class="list-group">
-				<a class="list-group-item with-badge " href="dashboard.php"><i class="fa fa-th"></i>Dashbaord<span class="badge badge-primary badge-pill">6</span></a>
-                <?php if($user->hd_staff == 'true'){ ?>
-					<a class="list-group-item with-badge " href="mytickets.php"><i class="fa fa-th"></i>My Tickets<span class="badge badge-primary badge-pill">6</span></a>
+				<a class="list-group-item  with-badge" href="dashboard.php"><i class="fa fa-th"></i>Dashbaord<?php if($dashboardcounter->loaded()> 0){ ?><span class="badge badge-primary badge-pill"><?php echo $dashboardcounter->loaded(); ?></span><?php } ?></a>
+                 <?php if($user->hd_staff == 'true'){ ?>
+					<a class="list-group-item with-badge" href="mytickets.php"><i class="fa fa-th"></i>My Tickets<?php if($ticketcounter->loaded()> 0){ ?><span class="badge badge-primary badge-pill"><?php echo $ticketcounter->loaded(); ?></span><?php } ?></a>
 				<?php } ?>
 				<a class="list-group-item" href="createticket.php"><i class="fa fa-ticket"></i>Create Ticket</a>
                 <a class="list-group-item " href="userprofile.php"><i class="fa fa-user"></i>Profile</a>
                 <a class="list-group-item" href="faq.php"><i class="fa fa-user"></i>FAQs</a>
-                <a class="list-group-item active" href="feedbacks.php"><i class="fa fa-user"></i>Feedbacks</a>
+                <?php if($user->hd_user == 'true'){ ?>
+					<a class="list-group-item" href="feedbacks.php"><i class="fa fa-user"></i>Feedbacks</a>
+				<?php } ?>
                 <a class="list-group-item" href="logout.php"><i class="fa fa-sign-out"></i>Logout</a>
             </nav>
         </div>
@@ -304,13 +315,29 @@ a.list-group-item, .list-group-item-action {
                             <form method="post" action="handler.php" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-md-12">
+										<div class="form-group">
+											<label for="category">Category</label>
+											<select class="form-control" name="category" id="category" required>
+												<option value="General">General</option>
+												<option value="Ticket">Ticket</option>
+												<option value="Agent">Agent</option>
+											</select>
+										</div>
+										<div class="form-group" id="ticketgroup" style="display:none;">
+											<label for="ticket">Ticket</label>
+											<input type="text" class="form-control" id="ticketreview" name="ticketreview" placeholder="Ticked ID">
+										</div>
+										<div class="form-group" id="agentgroup" style="display:none;">
+                                            <label for="username">Agent</label>
+                                            <input type="text" class="form-control" id="agentreview" name="agentreview" placeholder="Suject">
+                                        </div>
                                         <div class="form-group">
                                             <label for="username">Subject</label>
-                                            <input type="text" class="form-control" id="subject" placeholder="Suject">
+                                            <input type="text" class="form-control" id="subject" placeholder="Suject" required>
                                         </div>
 										<div class="form-group">
 											<label for="password">Rating</label>
-											<select class="form-control" name="rating" id="rating">
+											<select class="form-control" name="rating" id="rating" required>
 												<option value="Very Good">Very Good</option>
 												<option value="Good">Good</option>
 												<option value="Okay">Okay</option>
@@ -320,7 +347,7 @@ a.list-group-item, .list-group-item-action {
 										</div>
                                         <div class="form-group">
                                             <label for="bio">Comment</label>
-                                            <textarea rows="2" class="form-control" id="comment" name="bio" placeholder="Tell something about yourself"><?php echo $user->bio; ?></textarea>
+                                            <textarea rows="2" class="form-control" id="comment" name="comment" placeholder="Please give us your feedback"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -336,10 +363,21 @@ a.list-group-item, .list-group-item-action {
     </div>
 
 </div>
-<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="http://netdna.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="js/jquery-1.10.2.min.js"></script>
+<script src="js/bootstrap/4.1.2/bootstrap.min.js"></script>
 <?php if($f3->exists('SESSION.feedbackinfo')){ unset($_SESSION['feedbackinfo']); } ?>
 <?php if($f3->exists('SESSION.feedbackinfoerror')){ unset($_SESSION['feedbackinfoerror']); } ?>
 <script>(function(w, d) { w.CollectId = "6084154b34b8b76f099efb2f"; var h = d.head || d.getElementsByTagName("head")[0]; var s = d.createElement("script"); s.setAttribute("type", "text/javascript"); s.async=true; s.setAttribute("src", "https://collectcdn.com/launcher.js"); h.appendChild(s); })(window, document);</script>
+<script>
+$('#category').on("click", function() {
+    if($('#category').val() == "Ticket"){
+		$("#ticketgroup").css("display", "block"); 
+	}else if($(this).val() == "Agent"){{
+		$("#agentgroup").css("display", "block"); 
+	}else{
+		$("#ticketgroup").css("display", "none"); 
+		$("#agentgroup").css("display", "none"); 
+	}
+});
 </body>
 </html>

@@ -22,6 +22,16 @@ if($user->hd_staff == "true"){
 	$tickets->load(array('username=?', $f3->get('SESSION.username')));
 }
 
+	
+$dashboardcounter =  new DB\SQL\Mapper($f3->get('db'),'hd_ticket');
+$dashboardcounter->load(array('agent = ?', ""));
+
+$myticketcounter =  new DB\SQL\Mapper($f3->get('db'),'hd_ticket');
+$myticketcounter->load(array('status = ?', "Open"));
+
+$pointcounter =  new DB\SQL\Mapper($f3->get('db'),'hd_ticket');
+$pointcounter->load(array('status = ?', "Closed"));
+
 
 $ticketcounter =  new DB\SQL\Mapper($f3->get('db'),'hd_ticket');
 $ticketcounter->load(array('status = ?', "Open"));
@@ -59,7 +69,7 @@ function get_time_ago( $time )
     <!--  All snippets are MIT license http://bootdey.com/license -->
     <title>support tickets</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap/4.1.2/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
     	body{margin-top:20px;
 background:#eee;
@@ -311,7 +321,6 @@ background:#eee;
 	border-top: 1px solid #ccc;
 }
 
-
 .user-info-wrapper {
     position: relative;
     width: 100%;
@@ -455,8 +464,8 @@ list-group-item:first-child {
     border-top-right-radius: .25rem;
 }
 a.list-group-item {
-    padding-top: 1.75rem;
-    padding-bottom: 1.75rem;
+    padding-top: .95rem;
+    padding-bottom: .95rem;
 }
 a.list-group-item, .list-group-item-action {
     transition: all .25s;
@@ -567,7 +576,7 @@ a.list-group-item, .list-group-item-action {
 		<div class="col-lg-4">
             <aside class="user-info-wrapper">
                 <div class="user-cover" style="background-image: url(https://bootdey.com/img/Content/bg1.jpg);">
-                    <?php if($user->hd_staff == 'true'){ ?><div class="info-label" data-toggle="tooltip" title="" data-original-title="You currently have 290 Reward Points to spend"><i class="icon-medal"></i>290 points</div> <?php } ?>
+                    <?php if($user->hd_staff == 'true'){ ?><div class="info-label" data-toggle="tooltip" title="" data-original-title="You currently have <?php echo $pointcounter->loaded(); ?> Reward Points to spend"><i class="icon-medal"></i><?php echo $pointcounter->loaded(); ?> points</div> <?php } ?>
                 </div>
                 <div class="user-info">
                     <div class="user-avatar">
@@ -578,14 +587,16 @@ a.list-group-item, .list-group-item-action {
                 </div>
             </aside>
             <nav class="list-group">
-				<a class="list-group-item  with-badge active" href="dashboard.php"><i class="fa fa-th"></i>Dashbaord<span class="badge badge-primary badge-pill">6</span></a>
+				<a class="list-group-item  with-badge active" href="dashboard.php"><i class="fa fa-th"></i>Dashbaord<?php if($dashboardcounter->loaded()> 0){ ?><span class="badge badge-primary badge-pill"><?php echo $dashboardcounter->loaded(); ?></span><?php } ?></a>
                  <?php if($user->hd_staff == 'true'){ ?>
-					<a class="list-group-item with-badge " href="mytickets.php"><i class="fa fa-th"></i>My Tickets<span class="badge badge-primary badge-pill">6</span></a>
+					<a class="list-group-item with-badge" href="mytickets.php"><i class="fa fa-th"></i>My Tickets<?php if($myticketcounter->loaded()> 0){ ?><span class="badge badge-primary badge-pill"><?php echo $myticketcounter->loaded(); ?></span><?php } ?></a>
 				<?php } ?>
 				<a class="list-group-item" href="createticket.php"><i class="fa fa-ticket"></i>Create Ticket</a>
                 <a class="list-group-item" href="userprofile.php"><i class="fa fa-user"></i>Profile</a>
                 <a class="list-group-item" href="faq.php"><i class="fa fa-question"></i>FAQs</a>
-				<a class="list-group-item" href="feedbacks.php"><i class="fa fa-user"></i>Feedbacks</a>
+				<?php if($user->hd_user == 'true'){ ?>
+					<a class="list-group-item" href="feedbacks.php"><i class="fa fa-user"></i>Feedbacks</a>
+				<?php } ?>
                 <a class="list-group-item" href="logout.php"><i class="fa fa-sign-out"></i>Logout</a>
             </nav>
         </div>
@@ -673,8 +684,8 @@ a.list-group-item, .list-group-item-action {
     </form>
 </section>
 </div>
-<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="js/jquery-1.10.2.min.js"></script>
+<script src="js/bootstrap/4.1.2/bootstrap.min.js"></script>
 <script>(function(w, d) { w.CollectId = "6084154b34b8b76f099efb2f"; var h = d.head || d.getElementsByTagName("head")[0]; var s = d.createElement("script"); s.setAttribute("type", "text/javascript"); s.async=true; s.setAttribute("src", "https://collectcdn.com/launcher.js"); h.appendChild(s); })(window, document);</script>
 <script type="text/javascript">
 	var list = document.querySelectorAll('.clickcontrol');

@@ -13,6 +13,15 @@ if($f3->exists('SESSION.username')){
 }
 $user =  new DB\SQL\Mapper($f3->get('db'),'hd_user');
 $user->load(array('username=?', $f3->get('SESSION.username')));
+
+$ticketcounter =  new DB\SQL\Mapper($f3->get('db'),'hd_ticket');
+$ticketcounter->load(array('status = ? AND agent = ?', "Open", $f3->get('SESSION.username')));
+	
+$dashboardcounter =  new DB\SQL\Mapper($f3->get('db'),'hd_ticket');
+$dashboardcounter->load(array('agent = ?', ""));
+
+$pointcounter =  new DB\SQL\Mapper($f3->get('db'),'hd_ticket');
+$pointcounter->load(array('status = ?', "Closed"));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +31,7 @@ $user->load(array('username=?', $f3->get('SESSION.username')));
     <!--  All snippets are MIT license http://bootdey.com/license -->
     <title>bs4 Profile Settings page - Bootdey.com</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap/4.1.2/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
     	body{
     margin-top:20px;
@@ -252,7 +261,7 @@ a.list-group-item, .list-group-item-action {
         <div class="col-lg-4">
             <aside class="user-info-wrapper">
                 <div class="user-cover" style="background-image: url(https://bootdey.com/img/Content/bg1.jpg);">
-                    <?php if($user->hd_staff == 'true'){ ?><div class="info-label" data-toggle="tooltip" title="" data-original-title="You currently have 290 Reward Points to spend"><i class="icon-medal"></i>290 points</div> <?php } ?>
+                    <?php if($user->hd_staff == 'true'){ ?><div class="info-label" data-toggle="tooltip" title="" data-original-title="You currently have <?php echo $pointcounter->loaded(); ?> Reward Points to spend"><i class="icon-medal"></i><?php echo $pointcounter->loaded(); ?> points</div> <?php } ?>
                 </div>
                 <div class="user-info">
                     <div class="user-avatar">
@@ -263,14 +272,16 @@ a.list-group-item, .list-group-item-action {
                 </div>
             </aside>
             <nav class="list-group">
-				<a class="list-group-item with-badge " href="dashboard.php"><i class="fa fa-th"></i>Dashbaord<span class="badge badge-primary badge-pill">6</span></a>
+				<a class="list-group-item  with-badge" href="dashboard.php"><i class="fa fa-th"></i>Dashbaord<?php if($dashboardcounter->loaded()> 0){ ?><span class="badge badge-primary badge-pill"><?php echo $dashboardcounter->loaded(); ?></span><?php } ?></a>
                  <?php if($user->hd_staff == 'true'){ ?>
-					<a class="list-group-item with-badge " href="mytickets.php"><i class="fa fa-th"></i>My Tickets<span class="badge badge-primary badge-pill">6</span></a>
+					<a class="list-group-item with-badge" href="mytickets.php"><i class="fa fa-th"></i>My Tickets<?php if($ticketcounter->loaded()> 0){ ?><span class="badge badge-primary badge-pill"><?php echo $ticketcounter->loaded(); ?></span><?php } ?></a>
 				<?php } ?>
 				<a class="list-group-item active" href="createticket.php"><i class="fa fa-ticket"></i>Create Ticket</a>
                 <a class="list-group-item" href="userprofile.php"><i class="fa fa-user"></i>Profile</a>
                 <a class="list-group-item" href="faq.php"><i class="fa fa-user"></i>FAQs</a>
-				<a class="list-group-item" href="feedbacks.php"><i class="fa fa-user"></i>Feedbacks</a>
+				<?php if($user->hd_user == 'true'){ ?>
+					<a class="list-group-item" href="feedbacks.php"><i class="fa fa-user"></i>Feedbacks</a>
+				<?php } ?>
                 <a class="list-group-item" href="logout.php"><i class="fa fa-sign-out"></i>Logout</a>
             </nav>
         </div>
@@ -308,9 +319,11 @@ a.list-group-item, .list-group-item-action {
 									<div class="form-group col-md-6">
 										<label for="priority">Priority</label>
 											<select class="form-control" id="priority" name="priority" required>
-												<option value="High">High</option>
-												<option value="Medium">Medium</option>
-												<option value="Low">Low</option>
+												<option value="Priority1">Priority 1: Critical</option>
+												<option value="Priority2">Priority 2: High</option>
+												<option value="Priority3">Priority 3: Standard</option>
+												<option value="Priority4">Priority 4: Scheduled</option>
+												<option value="Priority5">Priority 5: Project</option>
 											</select>
 									</div>
 									<div class="form-group col-md-6">
@@ -358,8 +371,8 @@ a.list-group-item, .list-group-item-action {
     </div>
 
 </div>
-<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="http://netdna.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="js/jquery-1.10.2.min.js"></script>
+<script src="js/bootstrap/4.1.2/bootstrap.min.js"></script>
 <?php if($f3->exists('SESSION.ticketcreated')){ unset($_SESSION['ticketcreated']); } ?>
 <script>(function(w, d) { w.CollectId = "6084154b34b8b76f099efb2f"; var h = d.head || d.getElementsByTagName("head")[0]; var s = d.createElement("script"); s.setAttribute("type", "text/javascript"); s.async=true; s.setAttribute("src", "https://collectcdn.com/launcher.js"); h.appendChild(s); })(window, document);</script>
 </body>

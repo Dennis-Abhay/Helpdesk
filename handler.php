@@ -73,6 +73,11 @@ $error = false;
 		
 		$f3->set('SESSION.userinfo', "true");
 		$f3->reroute('userprofile.php');
+	}else if(isset($_GET['feedback'])){
+		$feedback =  new DB\SQL\Mapper($f3->get('db'),'hd_feedback');
+		$feedback->copyFrom('POST');
+		$feedback->save();
+		$f3->reroute('feedbacks.php');
 	}else if(isset($_GET['ticketid'])){
 		$ticket =  new DB\SQL\Mapper($f3->get('db'),'hd_ticket');
 		$ticket->load(array('ticket_id=?', $f3->get('GET.ticketid')));

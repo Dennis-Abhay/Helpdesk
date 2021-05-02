@@ -176,7 +176,7 @@ include('dbconfig.php');
 						<input type="password" class="form-control" name="lastname" required placeholder="Lastname">
 					</div>
 					<div class="clearfix"></div>
-					<p>Already have an account? <a href="login.html">Login here</a></p>
+					<p>Already have an account? <a href="login.php">Login here</a></p>
 					<button  class="btn btn-block btn-primary btn-float m-t-25" name="signup">Sign In</button>
 				</form>
 			</div>

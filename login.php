@@ -171,7 +171,7 @@ include('dbconfig.php');
 						<input type="password" class="form-control" name="password" required placeholder="Password">
 					</div>
 					<div class="clearfix"></div>
-					<p>Don't have an account? <a href="register.html">Register here</a></p>
+					<p>Don't have an account? <a href="register.php">Register here</a></p>
 					<button type="submit" class="btn btn-block btn-primary btn-float m-t-25" name="signin">Sign In</button>
 				</form>
 				

@@ -6,7 +6,7 @@
     <!--  All snippets are MIT license http://bootdey.com/license -->
     <title>paq page - Bootdey.com</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap/4.1.2/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
     	body{
     background:#f5f5f6;
@@ -349,8 +349,8 @@ a {
     </div>
     <!-- /Row -->
 </div>
-<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="http://netdna.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="js/jquery-1.10.2.min.js"></script>
+<script src="js/bootstrap/4.1.2/bootstrap.min.js"></script>
 <script>(function(w, d) { w.CollectId = "6084154b34b8b76f099efb2f"; var h = d.head || d.getElementsByTagName("head")[0]; var s = d.createElement("script"); s.setAttribute("type", "text/javascript"); s.async=true; s.setAttribute("src", "https://collectcdn.com/launcher.js"); h.appendChild(s); })(window, document);</script>
 </body>
 </html>
